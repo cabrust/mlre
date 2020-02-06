@@ -1,0 +1,29 @@
+repos:
+-   repo: https://github.com/timothycrosley/isort
+    rev: 4.3.21
+    hooks:
+    - id: isort
+-   repo: https://github.com/pre-commit/mirrors-autopep8
+    rev: v1.5
+    hooks:
+    -   id: autopep8
+-   repo: local
+    hooks:
+    - id: pylint
+      name: System PyLint
+      description: System PyLint (use correct venv!)
+      language: system
+      entry: pylint-fail-under --fail_under 10.0
+      types: ["python"]
+    - id: bandit
+      name: System Bandit
+      description: System Bandit (use correct venv!)
+      language: system
+      entry: bandit
+      types: ["python"]
+    - id: mypy
+      name: System MyPy
+      description: System MyPy (use correct venv!)
+      language: system
+      entry: mypy
+      types: ["python"]
