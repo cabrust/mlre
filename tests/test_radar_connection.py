@@ -81,7 +81,7 @@ class TestRadarConnectionRequestBodies(PatchedPostRequestRadarConnectionTestCase
         _report_test_client_info(self.connection)
 
         self.assertEqual(1, len(responses.calls),
-                         "Client should have made one call")
+                         "Client should have made one call.")
 
         # Test URL
         self.assertEqual(urllib.parse.urljoin(
@@ -99,4 +99,17 @@ class TestRadarConnectionRequestBodies(PatchedPostRequestRadarConnectionTestCase
     @responses.activate
     def test_report_event(self) -> None:
         """Check the request body of an event report for compliance."""
-        raise NotImplementedError("This test is missing!")
+
+        # Need to report client info first
+        _report_test_client_info(self.connection)
+
+        _report_test_event(self.connection)
+
+        self.assertEqual(2, len(responses.calls),
+                         "Client should have made two calls.")
+
+        # Test URL
+        self.assertEqual(urllib.parse.urljoin(
+            _TEST_ENDPOINT, "report_event"), responses.calls[1].request.url)
+
+        raise NotImplementedError("This test is mostly missing!")

@@ -2,7 +2,7 @@
 import enum
 
 
-class Severity(enum.Enum):
+class Severity(enum.IntEnum):
     """Describes the severity of an event."""
 
     INFO = enum.auto()
