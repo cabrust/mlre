@@ -16,6 +16,9 @@ _TEST_EVENT_LOCATION = __name__
 _TEST_EVENT_FREEZE_FRAME = {"test_data": 1.23456789}
 _TEST_ENVIRONMENT = {"ENV1": "env1_test", "ENV2": "ENV2"}
 
+_TEST_EVENT_IDENTIFIER = radar_common.EventIdentifier(
+    _TEST_EVENT_SEVERITY, _TEST_EVENT_LOCATION, _TEST_EVENT_DESCRIPTION)
+
 
 def _report_test_client_info(connection: radar_connection.Connection) -> None:
     connection.report_client_info(_TEST_HOSTNAME,
@@ -24,9 +27,7 @@ def _report_test_client_info(connection: radar_connection.Connection) -> None:
 
 def _report_test_event(connection: radar_connection.Connection) -> None:
     connection.report_event(
-        _TEST_EVENT_SEVERITY,
-        _TEST_EVENT_LOCATION,
-        _TEST_EVENT_DESCRIPTION,
+        _TEST_EVENT_IDENTIFIER,
         _TEST_EVENT_FREEZE_FRAME)
 
 
@@ -117,10 +118,7 @@ class TestRadarConnectionRequestBodies(PatchedPostRequestRadarConnectionTestCase
 
         self.assertEqual(_TEST_SESSION_UUID, uuid.UUID(
             decoded_request["session"]))
-        self.assertEqual(_TEST_EVENT_SEVERITY, radar_common.Severity(
-            decoded_request["severity"]))
-        self.assertEqual(_TEST_EVENT_LOCATION, decoded_request["location"])
-        self.assertEqual(_TEST_EVENT_DESCRIPTION,
-                         decoded_request["description"])
+        self.assertEqual(_TEST_EVENT_IDENTIFIER, radar_common.EventIdentifier(
+            *decoded_request["event_identifier"]))
         self.assertEqual(_TEST_EVENT_FREEZE_FRAME,
                          decoded_request["freeze_frame"])

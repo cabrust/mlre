@@ -54,9 +54,7 @@ class Connection:
 
     def report_event(
             self,
-            severity: radar_common.Severity,
-            location: str,
-            description: str,
+            event_identifier: radar_common.EventIdentifier,
             freeze_frame: typing.Dict[str, typing.Any],
     ) -> None:
         """Reports an event to the server.
@@ -64,9 +62,7 @@ class Connection:
         Make sure to report the client information before reporting any events.
 
         Args:
-            severity: The severity of the event.
-            location: Where the event happened.
-            description: What happened.
+            event_identifier: Unique identifier of the event.
             freeze_frame: A dictionary of helpful measurements.
         """
         if not self._has_reported_client_info:
@@ -75,9 +71,7 @@ class Connection:
 
         request_url = urllib.parse.urljoin(self._endpoint_url, "report_event")
         request_body = {"session": str(self._session_uuid),
-                        "severity": severity,
-                        "location": location,
-                        "description": description,
+                        "event_identifier": event_identifier,
                         "freeze_frame": freeze_frame}
 
         requests.post(request_url, json=request_body)
