@@ -115,8 +115,12 @@ class TestRadarConnectionRequestBodies(PatchedPostRequestRadarConnectionTestCase
         # Decode request again
         decoded_request = json.loads(responses.calls[1].request.body)
 
-        self.assertEqual(_TEST_SESSION_UUID, uuid.UUID(decoded_request["session"]))
-        self.assertEqual(_TEST_EVENT_SEVERITY, radar_common.Severity(decoded_request["severity"]))
+        self.assertEqual(_TEST_SESSION_UUID, uuid.UUID(
+            decoded_request["session"]))
+        self.assertEqual(_TEST_EVENT_SEVERITY, radar_common.Severity(
+            decoded_request["severity"]))
         self.assertEqual(_TEST_EVENT_LOCATION, decoded_request["location"])
-        self.assertEqual(_TEST_EVENT_DESCRIPTION, decoded_request["description"])
-        self.assertEqual(_TEST_EVENT_FREEZE_FRAME, decoded_request["freeze_frame"])
+        self.assertEqual(_TEST_EVENT_DESCRIPTION,
+                         decoded_request["description"])
+        self.assertEqual(_TEST_EVENT_FREEZE_FRAME,
+                         decoded_request["freeze_frame"])
