@@ -3,4 +3,6 @@ __pycache__
 .idea/
 .mypy_cache
 .mutmut-cache
+.tox/
 venv/
+mlre.egg-info/
