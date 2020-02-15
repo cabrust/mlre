@@ -2,4 +2,5 @@ playground/
 __pycache__
 .idea/
 .mypy_cache
+.mutmut_cache
 venv/

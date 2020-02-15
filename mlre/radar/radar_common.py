@@ -23,6 +23,6 @@ class EventIdentifier(typing.NamedTuple):
     description: str
 
 
-FreezeFrameData = typing.Dict[str, typing.Any]
+FreezeFrameData = typing.Dict[str, typing.Any]  # pragma: no mutate
 
 __all__ = ["Severity", "EventIdentifier"]

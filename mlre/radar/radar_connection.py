@@ -20,9 +20,9 @@ class Connection:
             endpoint_url: URL to send requests to.
             session_uuid: UUID (self-generated) of the current session.
         """
-        self._endpoint_url = endpoint_url
-        self._session_uuid = session_uuid
-        self._has_reported_client_info = False
+        self._endpoint_url: str = endpoint_url
+        self._session_uuid: uuid.UUID = session_uuid
+        self._has_reported_client_info: bool = False
 
     def report_client_info(
             self,

@@ -58,14 +58,19 @@ class TestRadarConnectionSessionFlow(PatchedPostRequestRadarConnectionTestCase):
     def test_can_only_report_client_info_once(self) -> None:
         """Should fail if the client is able to report its info more than once."""
         _report_test_client_info(self.connection)
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValueError) as error:
             _report_test_client_info(self.connection)
+        self.assertEqual(
+            "This method should only be called once per session.", error.exception.args[0])
 
     @responses.activate
     def test_needs_to_report_client_info(self) -> None:
         """Should fail if client can report an event without reporting client info beforehand."""
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValueError) as error:
             _report_test_event(self.connection)
+        self.assertEqual(
+            "Make sure to report the client information before reporting any events.",
+            error.exception.args[0])
 
     @responses.activate
     def test_can_report_event_after_reporting_client_info(self) -> None:

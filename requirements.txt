@@ -7,3 +7,4 @@ pre-commit==2.0.1
 bandit==1.6.2
 responses==0.10.9
 mypy==0.761
+mutmut==1.6.0
