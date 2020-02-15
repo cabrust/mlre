@@ -6,9 +6,9 @@ import typing
 class Severity(enum.IntEnum):
     """Describes the severity of an event."""
 
-    INFO = enum.auto()
-    WARNING = enum.auto()
-    ERROR = enum.auto()
+    INFO: int = enum.auto()  # pragma: no mutate
+    WARNING = enum.auto()  # pragma: no mutate
+    ERROR = enum.auto()  # pragma: no mutate
 
 
 class EventIdentifier(typing.NamedTuple):
@@ -23,6 +23,7 @@ class EventIdentifier(typing.NamedTuple):
     description: str
 
 
-FreezeFrameData = typing.Dict[str, typing.Any]  # pragma: no mutate
+FreezeFrameMeasurement = typing.Union[str, int, float]
+FreezeFrameData = typing.Dict[str, FreezeFrameMeasurement]
 
 __all__ = ["Severity", "EventIdentifier"]

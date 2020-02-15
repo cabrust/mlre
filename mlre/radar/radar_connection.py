@@ -55,7 +55,7 @@ class Connection:
     def report_event(
             self,
             event_identifier: radar_common.EventIdentifier,
-            freeze_frame: typing.Dict[str, typing.Any],
+            freeze_frame: radar_common.FreezeFrameData,
     ) -> None:
         """Reports an event to the server.
 

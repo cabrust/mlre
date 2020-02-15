@@ -5,30 +5,21 @@ import urllib.parse
 import uuid
 
 import responses
+import test_radar_common
 from mlre.radar import radar_common, radar_connection
-
-_TEST_HOSTNAME = "test_hostname"
-_TEST_ENDPOINT = "https://api.test_url.org/"
-_TEST_SESSION_UUID = uuid.uuid1()
-_TEST_EVENT_SEVERITY = radar_common.Severity.INFO
-_TEST_EVENT_DESCRIPTION = "This is a test event"
-_TEST_EVENT_LOCATION = __name__
-_TEST_EVENT_FREEZE_FRAME = {"test_data": 1.23456789}
-_TEST_ENVIRONMENT = {"ENV1": "env1_test", "ENV2": "ENV2"}
-
-_TEST_EVENT_IDENTIFIER = radar_common.EventIdentifier(
-    _TEST_EVENT_SEVERITY, _TEST_EVENT_LOCATION, _TEST_EVENT_DESCRIPTION)
 
 
 def _report_test_client_info(connection: radar_connection.Connection) -> None:
-    connection.report_client_info(_TEST_HOSTNAME,
-                                  _TEST_ENVIRONMENT)
+    """Reports sample client info to connection."""
+    connection.report_client_info(test_radar_common.TEST_HOSTNAME,
+                                  test_radar_common.TEST_ENVIRONMENT)
 
 
 def _report_test_event(connection: radar_connection.Connection) -> None:
+    """Reports sample client event to connection."""
     connection.report_event(
-        _TEST_EVENT_IDENTIFIER,
-        _TEST_EVENT_FREEZE_FRAME)
+        test_radar_common.TEST_EVENT_IDENTIFIER,
+        test_radar_common.TEST_EVENT_FREEZE_FRAME)
 
 
 class PatchedPostRequestRadarConnectionTestCase(unittest.TestCase):
@@ -36,15 +27,16 @@ class PatchedPostRequestRadarConnectionTestCase(unittest.TestCase):
 
     def setUp(self) -> None:
         self.connection: radar_connection.Connection = radar_connection.Connection(
-            _TEST_ENDPOINT, _TEST_SESSION_UUID)
+            test_radar_common.TEST_ENDPOINT, test_radar_common.TEST_SESSION_UUID)
 
         # Add mocks for API calls
         responses.add(responses.POST,
-                      urllib.parse.urljoin(_TEST_ENDPOINT, "report_event"),
+                      urllib.parse.urljoin(
+                          test_radar_common.TEST_ENDPOINT, "report_event"),
                       status=200)
         responses.add(responses.POST,
                       urllib.parse.urljoin(
-                          _TEST_ENDPOINT, "report_client_info"),
+                          test_radar_common.TEST_ENDPOINT, "report_client_info"),
                       status=200)
 
 
@@ -91,15 +83,16 @@ class TestRadarConnectionRequestBodies(PatchedPostRequestRadarConnectionTestCase
 
         # Test URL
         self.assertEqual(urllib.parse.urljoin(
-            _TEST_ENDPOINT, "report_client_info"), responses.calls[0].request.url)
+            test_radar_common.TEST_ENDPOINT, "report_client_info"), responses.calls[0].request.url)
 
         # Decode request again
         decoded_request = json.loads(responses.calls[0].request.body)
 
-        self.assertEqual(_TEST_HOSTNAME, decoded_request["hostname"])
-        self.assertEqual(_TEST_SESSION_UUID, uuid.UUID(
+        self.assertEqual(test_radar_common.TEST_HOSTNAME,
+                         decoded_request["hostname"])
+        self.assertEqual(test_radar_common.TEST_SESSION_UUID, uuid.UUID(
             decoded_request["session"]))
-        self.assertEqual(_TEST_ENVIRONMENT,
+        self.assertEqual(test_radar_common.TEST_ENVIRONMENT,
                          decoded_request["environment_variables"])
 
     @responses.activate
@@ -116,14 +109,14 @@ class TestRadarConnectionRequestBodies(PatchedPostRequestRadarConnectionTestCase
 
         # Test URL
         self.assertEqual(urllib.parse.urljoin(
-            _TEST_ENDPOINT, "report_event"), responses.calls[1].request.url)
+            test_radar_common.TEST_ENDPOINT, "report_event"), responses.calls[1].request.url)
 
         # Decode request again
         decoded_request = json.loads(responses.calls[1].request.body)
 
-        self.assertEqual(_TEST_SESSION_UUID, uuid.UUID(
+        self.assertEqual(test_radar_common.TEST_SESSION_UUID, uuid.UUID(
             decoded_request["session"]))
-        self.assertEqual(_TEST_EVENT_IDENTIFIER, radar_common.EventIdentifier(
+        self.assertEqual(test_radar_common.TEST_EVENT_IDENTIFIER, radar_common.EventIdentifier(
             *decoded_request["event_identifier"]))
-        self.assertEqual(_TEST_EVENT_FREEZE_FRAME,
+        self.assertEqual(test_radar_common.TEST_EVENT_FREEZE_FRAME,
                          decoded_request["freeze_frame"])
