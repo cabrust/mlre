@@ -83,6 +83,7 @@ class TestRadarDatabase(unittest.TestCase):
 
         # Insert one event and test it
         self.test_insert_1()
+
         self.database.insert_event(
             test_radar_common.TEST_EVENT_IDENTIFIER_ALTERNATIVE,
             test_radar_common.TEST_EVENT_FREEZE_FRAME_ALTERNATIVE)
@@ -106,3 +107,54 @@ class TestRadarDatabase(unittest.TestCase):
         self.assertEqual(test_radar_common.TEST_EVENT_FREEZE_FRAME, event1[0])
         self.assertEqual(
             test_radar_common.TEST_EVENT_FREEZE_FRAME_ALTERNATIVE, event2[0])
+
+    def test_insert_1_client_info(self) -> None:
+        """Tests if inserting client information works."""
+        self.database.insert_client_info(test_radar_common.TEST_SESSION_UUID,
+                                         test_radar_common.TEST_CLIENT_INFO)
+
+        # Get the info back from the database
+        actual_client_info = self.database.client_info(
+            test_radar_common.TEST_SESSION_UUID)
+
+        # Check for correctness
+        self.assertEqual(test_radar_common.TEST_CLIENT_INFO,
+                         actual_client_info,
+                         "Client information for test session UUID should be correct.")
+
+    def test_insert_2_different_client_infos(self) -> None:
+        """Tests if inserting client infos for two sessions works."""
+        self.database.insert_client_info(test_radar_common.TEST_SESSION_UUID_ALTERNATIVE,
+                                         test_radar_common.TEST_CLIENT_INFO_ALTERNATIVE)
+
+        self.test_insert_1_client_info()
+
+        # Get the second info back from the database
+        actual_client_info =\
+            self.database.client_info(
+                test_radar_common.TEST_SESSION_UUID_ALTERNATIVE)
+
+        # Check for correctness
+        self.assertEqual(test_radar_common.TEST_CLIENT_INFO_ALTERNATIVE,
+                         actual_client_info,
+                         "Client information for second test session UUID should be correct.")
+
+    def test_insert_2_identical_client_infos(self) -> None:
+        """Tests if inserting the same client info twice works.
+
+        This should not fail, but rather just replace the client info."""
+
+        self.test_insert_1_client_info()
+
+        # Use the same UUID, but different info
+        self.database.insert_client_info(test_radar_common.TEST_SESSION_UUID,
+                                         test_radar_common.TEST_CLIENT_INFO_ALTERNATIVE)
+
+        # Get the second info back from the database
+        actual_client_info = self.database.client_info(
+            test_radar_common.TEST_SESSION_UUID)
+
+        # Check for correctness
+        self.assertEqual(test_radar_common.TEST_CLIENT_INFO_ALTERNATIVE,
+                         actual_client_info,
+                         "Client information for first test session UUID should be overwritten.")

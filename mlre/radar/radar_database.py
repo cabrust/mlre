@@ -1,10 +1,14 @@
 """Database access layer for radar event and client info."""
 import typing
+import uuid
 
 from . import radar_common
 
 _EventDataDict = typing.Dict[radar_common.EventIdentifier,
-                             typing.List[radar_common.FreezeFrameData]]  # pragma: no mutate
+                             typing.List[radar_common.FreezeFrameData]]
+
+_ClientInfoDict = typing.Dict[uuid.UUID,
+                              radar_common.ClientInfo]
 
 
 class RadarDatabase:
@@ -12,6 +16,7 @@ class RadarDatabase:
 
     def __init__(self) -> None:
         self._event_data: _EventDataDict = dict()
+        self._client_info: _ClientInfoDict = dict()
 
     @property
     def event_identifiers(self) -> typing.Sequence[radar_common.EventIdentifier]:
@@ -47,6 +52,20 @@ class RadarDatabase:
             The freeze frame data matching the event identifier.
         """
         return self._event_data[event_identifier]
+
+    def insert_client_info(self, session_id: uuid.UUID,
+                           client_info: radar_common.ClientInfo) -> None:
+        """Inserts client info for a session into the database.
+
+        Args:
+            session_id: Unique session identifier.
+            client_info: Client information structure."""
+
+        self._client_info[session_id] = client_info
+
+    def client_info(self, session_id: uuid.UUID) -> typing.Optional[radar_common.ClientInfo]:
+        """Gets client info associated with a session id from the database."""
+        return self._client_info[session_id]
 
 
 __all__ = ["RadarDatabase"]
