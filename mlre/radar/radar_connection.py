@@ -1,5 +1,4 @@
 """Handles to client->server connection."""
-import typing
 import urllib.parse
 import uuid
 
