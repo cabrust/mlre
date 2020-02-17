@@ -17,10 +17,22 @@ class EventIdentifier(typing.NamedTuple):
     Members:
         severity: The severity of the event.
         location: Where the event happened.
-        description: What happened."""
+        description: What happened.
+    """
     severity: Severity
     location: str
     description: str
+
+
+class ClientInfo(typing.NamedTuple):
+    """Stores information about a client's environment.
+
+    Members:
+        hostname: Hostname of client.
+        environment_variables: Environment variables of the client.
+    """
+    hostname: str
+    environment_variables: typing.Dict[str, str]
 
 
 FreezeFrameMeasurement = typing.Union[str, int, float]

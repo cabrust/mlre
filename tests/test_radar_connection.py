@@ -11,8 +11,7 @@ from mlre.radar import radar_common, radar_connection
 
 def _report_test_client_info(connection: radar_connection.Connection) -> None:
     """Reports sample client info to connection."""
-    connection.report_client_info(test_radar_common.TEST_HOSTNAME,
-                                  test_radar_common.TEST_ENVIRONMENT)
+    connection.report_client_info(test_radar_common.TEST_CLIENT_INFO)
 
 
 def _report_test_event(connection: radar_connection.Connection) -> None:
@@ -88,12 +87,10 @@ class TestRadarConnectionRequestBodies(PatchedPostRequestRadarConnectionTestCase
         # Decode request again
         decoded_request = json.loads(responses.calls[0].request.body)
 
-        self.assertEqual(test_radar_common.TEST_HOSTNAME,
-                         decoded_request["hostname"])
+        self.assertEqual(test_radar_common.TEST_CLIENT_INFO,
+                         radar_common.ClientInfo(*decoded_request["client_info"]))
         self.assertEqual(test_radar_common.TEST_SESSION_UUID, uuid.UUID(
             decoded_request["session"]))
-        self.assertEqual(test_radar_common.TEST_ENVIRONMENT,
-                         decoded_request["environment_variables"])
 
     @responses.activate
     def test_report_event(self) -> None:

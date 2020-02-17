@@ -26,16 +26,14 @@ class Connection:
 
     def report_client_info(
             self,
-            hostname: str,
-            environment_variables: typing.Dict[str, str]) -> None:
+            client_info: radar_common.ClientInfo) -> None:
         """Reports information about the client to the server.
 
         This method should only be called once per session, and before
         any events are reported.
 
         Args:
-            hostname: The client's hostname.
-            environment_variables: A dictionary of all the client's environment variables.
+            client_info: Client information object.
         """
         if self._has_reported_client_info:
             raise ValueError(
@@ -44,8 +42,7 @@ class Connection:
         request_url = urllib.parse.urljoin(
             self._endpoint_url, "report_client_info")
         request_body = {"session": str(self._session_uuid),
-                        "hostname": hostname,
-                        "environment_variables": environment_variables}
+                        "client_info": client_info}
 
         requests.post(request_url, json=request_body)
 
