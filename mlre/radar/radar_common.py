@@ -7,8 +7,8 @@ class Severity(enum.IntEnum):
     """Describes the severity of an event."""
 
     INFO: int = enum.auto()  # pragma: no mutate
-    WARNING = enum.auto()  # pragma: no mutate
-    ERROR = enum.auto()  # pragma: no mutate
+    WARNING: int = enum.auto()  # pragma: no mutate
+    ERROR: int = enum.auto()  # pragma: no mutate
 
 
 class EventIdentifier(typing.NamedTuple):
