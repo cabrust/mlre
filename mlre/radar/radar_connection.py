@@ -71,3 +71,6 @@ class Connection:
                         "freeze_frame": freeze_frame}
 
         requests.post(request_url, json=request_body)
+
+
+__all__ = ["Connection"]
