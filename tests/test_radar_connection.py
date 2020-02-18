@@ -5,6 +5,8 @@ import urllib.parse
 import uuid
 
 import responses
+
+import mlre
 import test_radar_common
 from mlre.radar import radar_common, radar_connection
 
@@ -117,3 +119,44 @@ class TestRadarConnectionRequestBodies(PatchedPostRequestRadarConnectionTestCase
             *decoded_request["event_identifier"]))
         self.assertEqual(test_radar_common.TEST_EVENT_FREEZE_FRAME,
                          decoded_request["freeze_frame"])
+
+
+class TestRadarConnectionVersionDecode(unittest.TestCase):
+    """Test case for the version API call."""
+
+    def setUp(self) -> None:
+        self.connection: radar_connection.Connection = radar_connection.Connection(
+            test_radar_common.TEST_ENDPOINT, test_radar_common.TEST_SESSION_UUID)
+
+        # Add mocks for API calls
+        responses.add(responses.GET,
+                      urllib.parse.urljoin(
+                          test_radar_common.TEST_ENDPOINT, "version"),
+                      json={'api': '1', 'mlre': mlre.__version__},
+                      status=200)
+
+    @responses.activate
+    def test_version_call_api_correct(self) -> None:
+        """Test if the API call to retrieve version information is correct."""
+        actual_api_version = self.connection.get_api_version()
+
+        # Test URL
+        self.assertEqual(urllib.parse.urljoin(
+            test_radar_common.TEST_ENDPOINT, "version"), responses.calls[0].request.url)
+
+        # Test result
+        self.assertEqual('1', actual_api_version,
+                         "Parsed API version should be correct.")
+
+    @responses.activate
+    def test_version_call_mlre_correct(self) -> None:
+        """Test if the API call to retrieve version information is correct."""
+        actual_mlre_version = self.connection.get_mlre_version()
+
+        # Test URL
+        self.assertEqual(urllib.parse.urljoin(
+            test_radar_common.TEST_ENDPOINT, "version"), responses.calls[0].request.url)
+
+        # Test result
+        self.assertEqual(mlre.__version__, actual_mlre_version,
+                         "Parsed MLRE version should be correct.")

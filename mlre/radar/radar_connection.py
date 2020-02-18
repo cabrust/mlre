@@ -1,4 +1,5 @@
 """Handles to client->server connection."""
+import typing
 import urllib.parse
 import uuid
 
@@ -22,6 +23,21 @@ class Connection:
         self._endpoint_url: str = endpoint_url
         self._session_uuid: uuid.UUID = session_uuid
         self._has_reported_client_info: bool = False
+
+    def get_api_version(self) -> typing.Optional[str]:
+        """Gets the server's API version."""
+        return self._get_version()[0]
+
+    def get_mlre_version(self) -> typing.Optional[str]:
+        """Gets the server's MLRE version."""
+        return self._get_version()[1]
+
+    def _get_version(self) -> typing.Tuple[str, str]:
+        """Gets the server's API and MLRE version."""
+        request_url = urllib.parse.urljoin(self._endpoint_url, "version")
+        response: typing.Dict[str, str] = requests.get(request_url).json()
+
+        return response['api'], response['mlre']
 
     def report_client_info(
             self,

@@ -24,7 +24,7 @@ def create_api_server(database: radar_database.RadarDatabase,   # type: ignore  
         api_server.config.from_mapping(configuration)  # type: ignore
 
     @api_server.route('/version')
-    def get_api_version() -> str:  # type: ignore  # pylint: disable=W0612
+    def get_version() -> str:  # type: ignore  # pylint: disable=W0612
         """Give api server and mlre versions."""
         return jsonify({'api': '1', 'mlre': mlre.__version__})  # type: ignore
 
