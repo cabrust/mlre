@@ -6,3 +6,4 @@ __pycache__
 .tox/
 venv/
 mlre.egg-info/
+.coverage
