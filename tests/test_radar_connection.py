@@ -92,7 +92,7 @@ class TestRadarConnectionRequestBodies(PatchedPostRequestRadarConnectionTestCase
         self.assertEqual(test_radar_common.TEST_CLIENT_INFO,
                          radar_common.ClientInfo(*decoded_request["client_info"]))
         self.assertEqual(test_radar_common.TEST_SESSION_UUID, uuid.UUID(
-            decoded_request["session"]))
+            decoded_request["session_id"]))
 
     @responses.activate
     def test_report_event(self) -> None:

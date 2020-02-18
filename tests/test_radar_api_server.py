@@ -73,3 +73,23 @@ class TestRadarAPIServer(unittest.TestCase):
         self.assertEqual(test_radar_common.TEST_EVENT_IDENTIFIER, arguments[1])
         self.assertEqual(
             test_radar_common.TEST_EVENT_FREEZE_FRAME, arguments[2])
+
+    def test_report_client_info(self) -> None:
+        """Test if the client info reporting API calls the database correctly."""
+        request_body = {"session_id": str(test_radar_common.TEST_SESSION_UUID),
+                        "client_info": test_radar_common.TEST_CLIENT_INFO}
+
+        response = self.api_test_client.post(
+            '/report_client_info', json=request_body)
+
+        self.assertEqual(200, response.status_code)
+
+        self.assertEqual(1, len(self.database.method_calls),
+                         "Number of database calls should be 1")
+
+        # Test if method was called correctly
+        target_method, arguments, _ = self.database.method_calls[0]
+
+        self.assertEqual('insert_client_info', target_method)
+        self.assertEqual(test_radar_common.TEST_SESSION_UUID, arguments[0])
+        self.assertEqual(test_radar_common.TEST_CLIENT_INFO, arguments[1])

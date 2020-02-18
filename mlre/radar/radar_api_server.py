@@ -46,6 +46,20 @@ def create_api_server(database: radar_database.RadarDatabase,   # type: ignore
         database.insert_event(session_id, event_identifier, freeze_frame)
         return ''
 
+    @api_server.route('/report_client_info', methods=['POST'])  # type: ignore
+    def report_client_info() -> str:  # pylint: disable=W0612
+        # Decode request
+        request_json = request.json  # type: ignore
+        session_id: uuid.UUID = uuid.UUID(
+            request_json['session_id'])  # type: ignore
+        client_info: radar_common.ClientInfo =\
+            radar_common.ClientInfo(
+                *request_json['client_info'])  # type: ignore
+
+        # Make database call
+        database.insert_client_info(session_id, client_info)
+        return ''
+
     return api_server
 
 

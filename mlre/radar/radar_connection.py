@@ -56,7 +56,7 @@ class Connection:
 
         request_url = urllib.parse.urljoin(
             self._endpoint_url, "report_client_info")
-        request_body = {"session": str(self._session_uuid),
+        request_body = {"session_id": str(self._session_uuid),
                         "client_info": client_info}
 
         requests.post(request_url, json=request_body)
