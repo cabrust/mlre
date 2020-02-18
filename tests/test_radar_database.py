@@ -26,7 +26,9 @@ class TestRadarDatabase(unittest.TestCase):
         """
 
         self.database.insert_event(
-            test_radar_common.TEST_EVENT_IDENTIFIER, test_radar_common.TEST_EVENT_FREEZE_FRAME)
+            test_radar_common.TEST_SESSION_UUID,
+            test_radar_common.TEST_EVENT_IDENTIFIER,
+            test_radar_common.TEST_EVENT_FREEZE_FRAME)
 
         self.assertEqual(1, len(self.database.event_identifiers))
         self.assertEqual(test_radar_common.TEST_EVENT_IDENTIFIER,
@@ -36,7 +38,8 @@ class TestRadarDatabase(unittest.TestCase):
         event = self.database.event(test_radar_common.TEST_EVENT_IDENTIFIER)
         self.assertEqual(1, len(event))
 
-        self.assertEqual(test_radar_common.TEST_EVENT_FREEZE_FRAME, event[0])
+        self.assertEqual((test_radar_common.TEST_SESSION_UUID,
+                          test_radar_common.TEST_EVENT_FREEZE_FRAME), event[0])
 
     def test_insert_2_identical_events(self) -> None:
         """Test if inserting two identical events works correctly.
@@ -53,6 +56,7 @@ class TestRadarDatabase(unittest.TestCase):
         # Insert one event and test it
         self.test_insert_1()
         self.database.insert_event(
+            test_radar_common.TEST_SESSION_UUID,
             test_radar_common.TEST_EVENT_IDENTIFIER,
             test_radar_common.TEST_EVENT_FREEZE_FRAME_ALTERNATIVE)
 
@@ -65,9 +69,11 @@ class TestRadarDatabase(unittest.TestCase):
         self.assertEqual(2, len(event))
 
         # The sequence should be kept and the data should be identical.
-        self.assertEqual(test_radar_common.TEST_EVENT_FREEZE_FRAME, event[0])
+        self.assertEqual((test_radar_common.TEST_SESSION_UUID,
+                          test_radar_common.TEST_EVENT_FREEZE_FRAME), event[0])
         self.assertEqual(
-            test_radar_common.TEST_EVENT_FREEZE_FRAME_ALTERNATIVE, event[1])
+            (test_radar_common.TEST_SESSION_UUID,
+             test_radar_common.TEST_EVENT_FREEZE_FRAME_ALTERNATIVE), event[1])
 
     def test_insert_2_different_events(self) -> None:
         """Test if inserting two different events works correctly.
@@ -85,6 +91,7 @@ class TestRadarDatabase(unittest.TestCase):
         self.test_insert_1()
 
         self.database.insert_event(
+            test_radar_common.TEST_SESSION_UUID_ALTERNATIVE,
             test_radar_common.TEST_EVENT_IDENTIFIER_ALTERNATIVE,
             test_radar_common.TEST_EVENT_FREEZE_FRAME_ALTERNATIVE)
 
@@ -104,9 +111,12 @@ class TestRadarDatabase(unittest.TestCase):
         self.assertEqual(1, len(event2))
 
         # The sequence should be kept and the data should be identical.
-        self.assertEqual(test_radar_common.TEST_EVENT_FREEZE_FRAME, event1[0])
         self.assertEqual(
-            test_radar_common.TEST_EVENT_FREEZE_FRAME_ALTERNATIVE, event2[0])
+            (test_radar_common.TEST_SESSION_UUID,
+             test_radar_common.TEST_EVENT_FREEZE_FRAME), event1[0])
+        self.assertEqual(
+            (test_radar_common.TEST_SESSION_UUID_ALTERNATIVE,
+             test_radar_common.TEST_EVENT_FREEZE_FRAME_ALTERNATIVE), event2[0])
 
     def test_insert_1_client_info(self) -> None:
         """Tests if inserting client information works."""

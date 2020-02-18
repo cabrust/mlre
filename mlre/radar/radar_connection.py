@@ -82,7 +82,7 @@ class Connection:
                 "Make sure to report the client information before reporting any events.")
 
         request_url = urllib.parse.urljoin(self._endpoint_url, "report_event")
-        request_body = {"session": str(self._session_uuid),
+        request_body = {"session_id": str(self._session_uuid),
                         "event_identifier": event_identifier,
                         "freeze_frame": freeze_frame}
 

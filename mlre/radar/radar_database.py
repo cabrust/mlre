@@ -5,7 +5,7 @@ import uuid
 from . import radar_common
 
 _EventDataDict = typing.Dict[radar_common.EventIdentifier,
-                             typing.List[radar_common.FreezeFrameData]]
+                             typing.List[typing.Tuple[uuid.UUID, radar_common.FreezeFrameData]]]
 
 _ClientInfoDict = typing.Dict[uuid.UUID,
                               radar_common.ClientInfo]
@@ -25,6 +25,7 @@ class RadarDatabase:
 
     def insert_event(
             self,
+            session_id: uuid.UUID,
             event_identifier: radar_common.EventIdentifier,
             freeze_frame: radar_common.FreezeFrameData,
     ) -> None:
@@ -33,16 +34,17 @@ class RadarDatabase:
         If the event already exists, the freeze frames are merged.
 
         Args:
+            session_id: Unique session identifier.
             event_identifier: Unique identifier of the event.
             freeze_frame: A dictionary of helpful measurements.
         """
         if event_identifier not in self.event_identifiers:
-            self._event_data[event_identifier] = [freeze_frame]
+            self._event_data[event_identifier] = [(session_id, freeze_frame)]
         else:
-            self._event_data[event_identifier] += [freeze_frame]
+            self._event_data[event_identifier] += [(session_id, freeze_frame)]
 
     def event(self, event_identifier: radar_common.EventIdentifier)\
-            -> typing.List[radar_common.FreezeFrameData]:
+            -> typing.List[typing.Tuple[uuid.UUID, radar_common.FreezeFrameData]]:
         """Returns the freeze frame data matching the given identifier.
 
         Args:

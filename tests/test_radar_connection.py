@@ -114,7 +114,7 @@ class TestRadarConnectionRequestBodies(PatchedPostRequestRadarConnectionTestCase
         decoded_request = json.loads(responses.calls[1].request.body)
 
         self.assertEqual(test_radar_common.TEST_SESSION_UUID, uuid.UUID(
-            decoded_request["session"]))
+            decoded_request["session_id"]))
         self.assertEqual(test_radar_common.TEST_EVENT_IDENTIFIER, radar_common.EventIdentifier(
             *decoded_request["event_identifier"]))
         self.assertEqual(test_radar_common.TEST_EVENT_FREEZE_FRAME,
