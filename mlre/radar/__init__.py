@@ -1,2 +1,2 @@
 """Error and Info Memory."""
-from .radar_connection import Connection
+from .radar_api_client import APIClient

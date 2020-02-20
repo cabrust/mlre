@@ -8,7 +8,7 @@ import requests
 from . import radar_common
 
 
-class Connection:
+class APIClient:
     """Represents an active connection to a radar server."""
 
     def __init__(self,
@@ -89,4 +89,4 @@ class Connection:
         requests.post(request_url, json=request_body)
 
 
-__all__ = ["Connection"]
+__all__ = ["APIClient"]

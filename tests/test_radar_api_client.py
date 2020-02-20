@@ -8,26 +8,26 @@ import responses
 
 import mlre
 import test_radar_common
-from mlre.radar import radar_common, radar_connection
+from mlre.radar import radar_api_client, radar_common
 
 
-def _report_test_client_info(connection: radar_connection.Connection) -> None:
+def _report_test_client_info(connection: radar_api_client.APIClient) -> None:
     """Reports sample client info to connection."""
     connection.report_client_info(test_radar_common.TEST_CLIENT_INFO)
 
 
-def _report_test_event(connection: radar_connection.Connection) -> None:
+def _report_test_event(connection: radar_api_client.APIClient) -> None:
     """Reports sample client event to connection."""
     connection.report_event(
         test_radar_common.TEST_EVENT_IDENTIFIER,
         test_radar_common.TEST_EVENT_FREEZE_FRAME)
 
 
-class PatchedPostRequestRadarConnectionTestCase(unittest.TestCase):
+class PatchedPostRequestRadarAPIClientTestCase(unittest.TestCase):
     """Base class for test cases which patches request.post to always return ok."""
 
     def setUp(self) -> None:
-        self.connection: radar_connection.Connection = radar_connection.Connection(
+        self.connection: radar_api_client.APIClient = radar_api_client.APIClient(
             test_radar_common.TEST_ENDPOINT, test_radar_common.TEST_SESSION_UUID)
 
         # Add mocks for API calls
@@ -41,7 +41,7 @@ class PatchedPostRequestRadarConnectionTestCase(unittest.TestCase):
                       status=200)
 
 
-class TestRadarConnectionSessionFlow(PatchedPostRequestRadarConnectionTestCase):
+class TestRadarAPIClientSessionFlow(PatchedPostRequestRadarAPIClientTestCase):
     """Test case for radar API connection component's session flow.
 
     The connection component should enforce reporting the client info exactly once
@@ -71,7 +71,7 @@ class TestRadarConnectionSessionFlow(PatchedPostRequestRadarConnectionTestCase):
         _report_test_client_info(self.connection)
 
 
-class TestRadarConnectionRequestBodies(PatchedPostRequestRadarConnectionTestCase):
+class TestRadarAPIClientRequestBodies(PatchedPostRequestRadarAPIClientTestCase):
     """Test case for radar API connection component's request body contents."""
 
     @responses.activate
@@ -121,11 +121,11 @@ class TestRadarConnectionRequestBodies(PatchedPostRequestRadarConnectionTestCase
                          decoded_request["freeze_frame"])
 
 
-class TestRadarConnectionVersionDecode(unittest.TestCase):
+class TestRadarAPIClientVersionDecode(unittest.TestCase):
     """Test case for the version API call."""
 
     def setUp(self) -> None:
-        self.connection: radar_connection.Connection = radar_connection.Connection(
+        self.connection: radar_api_client.APIClient = radar_api_client.APIClient(
             test_radar_common.TEST_ENDPOINT, test_radar_common.TEST_SESSION_UUID)
 
         # Add mocks for API calls
