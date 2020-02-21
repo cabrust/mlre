@@ -14,7 +14,7 @@ class TestRadarDatabase(unittest.TestCase):
 
     def test_initial_state(self) -> None:
         """Test if initial database state is empty."""
-        self.assertEqual(0, len(self.database.event_identifiers))
+        self.assertEqual(0, len(self.database.event_identifiers()))
 
     def test_insert_1(self) -> None:
         """Test if inserting one event works correctly.
@@ -30,9 +30,9 @@ class TestRadarDatabase(unittest.TestCase):
             test_radar_common.TEST_EVENT_IDENTIFIER,
             test_radar_common.TEST_EVENT_FREEZE_FRAME)
 
-        self.assertEqual(1, len(self.database.event_identifiers))
+        self.assertEqual(1, len(self.database.event_identifiers()))
         self.assertEqual(test_radar_common.TEST_EVENT_IDENTIFIER,
-                         self.database.event_identifiers[0])
+                         self.database.event_identifiers()[0])
 
         # Test if the freeze frame data matches
         event = self.database.event(test_radar_common.TEST_EVENT_IDENTIFIER)
@@ -60,9 +60,9 @@ class TestRadarDatabase(unittest.TestCase):
             test_radar_common.TEST_EVENT_IDENTIFIER,
             test_radar_common.TEST_EVENT_FREEZE_FRAME_ALTERNATIVE)
 
-        self.assertEqual(1, len(self.database.event_identifiers))
+        self.assertEqual(1, len(self.database.event_identifiers()))
         self.assertEqual(test_radar_common.TEST_EVENT_IDENTIFIER,
-                         self.database.event_identifiers[0])
+                         self.database.event_identifiers()[0])
 
         # Test if the new freeze frame data matches.
         event = self.database.event(test_radar_common.TEST_EVENT_IDENTIFIER)
@@ -95,12 +95,12 @@ class TestRadarDatabase(unittest.TestCase):
             test_radar_common.TEST_EVENT_IDENTIFIER_ALTERNATIVE,
             test_radar_common.TEST_EVENT_FREEZE_FRAME_ALTERNATIVE)
 
-        self.assertEqual(2, len(self.database.event_identifiers))
+        self.assertEqual(2, len(self.database.event_identifiers()))
         event_identifiers: typing.List[radar_common.EventIdentifier] = [
             test_radar_common.TEST_EVENT_IDENTIFIER,
             test_radar_common.TEST_EVENT_IDENTIFIER_ALTERNATIVE]
         self.assertEqual(event_identifiers,
-                         self.database.event_identifiers)
+                         self.database.event_identifiers())
 
         # Test if the new freeze frame data matches.
         event1 = self.database.event(test_radar_common.TEST_EVENT_IDENTIFIER)

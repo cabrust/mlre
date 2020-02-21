@@ -18,7 +18,6 @@ class RadarDatabase:
         self._event_data: _EventDataDict = dict()
         self._client_info: _ClientInfoDict = dict()
 
-    @property
     def event_identifiers(self) -> typing.Sequence[radar_common.EventIdentifier]:
         """Gets all events uniquely identified by the severity/location/description triplet."""
         return list(self._event_data.keys())
@@ -38,7 +37,7 @@ class RadarDatabase:
             event_identifier: Unique identifier of the event.
             freeze_frame: A dictionary of helpful measurements.
         """
-        if event_identifier not in self.event_identifiers:
+        if event_identifier not in self.event_identifiers():
             self._event_data[event_identifier] = [(session_id, freeze_frame)]
         else:
             self._event_data[event_identifier] += [(session_id, freeze_frame)]
