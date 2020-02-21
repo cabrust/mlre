@@ -63,4 +63,11 @@ def create_api_server(database: radar_database.RadarDatabase,   # type: ignore
     return api_server
 
 
+def create_default_app() -> Flask:
+    """Creates an app instance with the default configuration."""
+    database = radar_database.RadarDatabase()
+    app = create_api_server(database)
+    return app
+
+
 __all__ = ["create_api_server"]

@@ -5,7 +5,7 @@ from unittest import mock
 
 import mlre
 import test_radar_common
-from mlre.radar import radar_api_server
+from mlre.radar import radar_api_server, radar_database
 
 _TEST_CONFIGURATION: typing.Dict[str, str] = {
     "TEST_CFG_1": "test_cfg_1_val", "TEST_CFG_2": "test_cfg_2_val"}
@@ -93,3 +93,30 @@ class TestRadarAPIServer(unittest.TestCase):
         self.assertEqual('insert_client_info', target_method)
         self.assertEqual(test_radar_common.TEST_SESSION_UUID, arguments[0])
         self.assertEqual(test_radar_common.TEST_CLIENT_INFO, arguments[1])
+
+
+class TestRadarAPIServerDefaultApp(unittest.TestCase):
+    """Test for radar API server default app method."""
+
+    def setUp(self) -> None:
+        """Hooks up the API server factory to mocking."""
+        self.patcher = mock.patch(
+            'mlre.radar.radar_api_server.create_api_server')
+        self.patched_method = self.patcher.start()
+
+    def tearDown(self) -> None:
+        """Tears down the factory mock."""
+        self.patcher.stop()
+
+    def test_default_app(self) -> None:
+        """Tests if the default app creator uses the correct call."""
+        radar_api_server.create_default_app()  # type: ignore
+
+        # Method should have been called only once
+        self.assertEqual(1, self.patched_method.call_count)
+
+        # Extract method arguments
+        arguments, _ = self.patched_method.call_args
+
+        # Test if the supplied argument is an actual database.
+        self.assertTrue(isinstance(arguments[0], radar_database.RadarDatabase))
