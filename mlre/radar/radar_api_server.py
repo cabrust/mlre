@@ -60,6 +60,26 @@ def create_api_server(database: radar_database.RadarDatabase,   # type: ignore
         database.insert_client_info(session_id, client_info)
         return ''
 
+    @api_server.route('/event_identifiers')  # type: ignore
+    def event_identifiers() ->\
+            typing.Dict[str, typing.Sequence[radar_common.EventIdentifier]]:  # pylint: disable=W0612
+        response_data = database.event_identifiers()
+        return {"event_identifiers": response_data}
+
+    @api_server.route('/event')  # type: ignore
+    # pylint: disable=W0612
+    def event() ->  \
+            typing.Dict[str,
+                        typing.Sequence[typing.Tuple[uuid.UUID, radar_common.FreezeFrameData]]]:
+        # Decode request
+        request_json = request.json  # type: ignore
+        event_identifier: radar_common.EventIdentifier = \
+            radar_common.EventIdentifier(
+                *request_json['event_identifier'])  # type: ignore
+
+        response_data = database.event(event_identifier)
+        return {"freeze_frames": response_data}
+
     return api_server
 
 
