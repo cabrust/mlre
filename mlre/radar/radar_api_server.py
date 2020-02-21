@@ -70,4 +70,4 @@ def create_default_app() -> Flask:
     return app
 
 
-__all__ = ["create_api_server"]
+__all__ = ["create_api_server", "create_default_app"]
