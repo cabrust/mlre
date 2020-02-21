@@ -143,7 +143,7 @@ class TestRadarAPIServer(unittest.TestCase):
         request_body = {
             "event_identifier": test_radar_common.TEST_EVENT_IDENTIFIER}
 
-        response = self.api_test_client.get(
+        response = self.api_test_client.post(
             '/event', json=request_body)
 
         self.assertEqual(200, response.status_code)

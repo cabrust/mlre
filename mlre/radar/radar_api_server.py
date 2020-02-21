@@ -66,7 +66,7 @@ def create_api_server(database: radar_database.RadarDatabase,   # type: ignore
         response_data = database.event_identifiers()
         return {"event_identifiers": response_data}
 
-    @api_server.route('/event')  # type: ignore
+    @api_server.route('/event', methods=['POST'])  # type: ignore
     # pylint: disable=W0612
     def event() ->  \
             typing.Dict[str,
