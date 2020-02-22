@@ -1,6 +1,4 @@
 """Tests for the radar frontend component."""
-import unittest
-
 from flask import Flask
 
 import test_radar_common

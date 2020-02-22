@@ -1,3 +1,4 @@
+"""Entry point for hosting the radar app with API and frontend."""
 from flask import Flask
 
 from mlre.radar import radar_api_server, radar_database, radar_frontend

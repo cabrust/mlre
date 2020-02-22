@@ -1,11 +1,12 @@
+"""Test for radar app entry point."""
 import unittest
 from unittest import mock
 
-from mlre.radar import radar_app, radar_database, radar_frontend
+from mlre.radar import radar_app, radar_database
 
 
-class TestRadarAPIServerDefaultApp(unittest.TestCase):
-    """Test for radar API server default app method."""
+class TestRadarApp(unittest.TestCase):
+    """Test for radar app entry point."""
 
     def setUp(self) -> None:
         """Hooks up the API server factory to mocking."""
@@ -22,7 +23,7 @@ class TestRadarAPIServerDefaultApp(unittest.TestCase):
         self.create_api_server_patcher.stop()
         self.create_frontend_blueprint_patcher.stop()
 
-    def test_default_app(self) -> None:
+    def test_create_default_app(self) -> None:
         """Tests if the default app creator uses the correct call."""
         radar_app.create_default_app()  # type: ignore
 
@@ -37,3 +38,5 @@ class TestRadarAPIServerDefaultApp(unittest.TestCase):
         # Test if the supplied argument is an actual database.
         self.assertTrue(isinstance(
             create_api_arguments[0], radar_database.RadarDatabase))
+        self.assertTrue(isinstance(
+            create_frontend_arguments[0], radar_database.RadarDatabase))

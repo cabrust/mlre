@@ -1,12 +1,10 @@
 """Test for radar API server component."""
 import typing
-import unittest
 import uuid
-from unittest import mock
 
 import mlre
 import test_radar_common
-from mlre.radar import radar_api_server, radar_common, radar_database
+from mlre.radar import radar_api_server, radar_common
 
 _TEST_CONFIGURATION: typing.Dict[str, str] = {
     "TEST_CFG_1": "test_cfg_1_val", "TEST_CFG_2": "test_cfg_2_val"}

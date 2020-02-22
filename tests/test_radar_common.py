@@ -39,6 +39,8 @@ TEST_EVENT_IDENTIFIER_ALTERNATIVE: radar_common.EventIdentifier = radar_common.E
 
 
 class MockedDatabaseTestCase(unittest.TestCase):
+    """Basis for test cases with mocked database."""
+
     def setUp(self) -> None:
         """Creates an instance of the API server to work on and a mock database."""
 
