@@ -12,29 +12,14 @@ _TEST_CONFIGURATION: typing.Dict[str, str] = {
     "TEST_CFG_1": "test_cfg_1_val", "TEST_CFG_2": "test_cfg_2_val"}
 
 
-class TestRadarAPIServer(unittest.TestCase):
+class TestRadarAPIServer(test_radar_common.MockedDatabaseTestCase):
     """Test for radar API server component."""
 
     def setUp(self) -> None:
         """Creates an instance of the API server to work on and a mock database."""
 
         # Create mocked database
-        self.patcher = mock.patch('mlre.radar.radar_database.RadarDatabase')
-        patched_database_type = self.patcher.start()
-
-        # Patch responses to method calls
-        patched_database_type.return_value.event_identifiers.return_value = [
-            test_radar_common.TEST_EVENT_IDENTIFIER,
-            test_radar_common.TEST_EVENT_IDENTIFIER_ALTERNATIVE]
-
-        patched_database_type.return_value.event.return_value = \
-            [(test_radar_common.TEST_SESSION_UUID,
-              test_radar_common.TEST_EVENT_FREEZE_FRAME),
-             (test_radar_common.TEST_SESSION_UUID_ALTERNATIVE,
-              test_radar_common.TEST_EVENT_FREEZE_FRAME_ALTERNATIVE)]
-
-        # Create instance of mock
-        self.database = patched_database_type()
+        super().setUp()
 
         # Start test client
         self.api_server = radar_api_server.create_api_server(
@@ -44,8 +29,8 @@ class TestRadarAPIServer(unittest.TestCase):
 
     def tearDown(self) -> None:
         """Tears down the flask test client and database mock."""
+        super().tearDown()
         self.api_test_client.__exit__(None, None, None)
-        self.patcher.stop()
 
     def test_configuration(self) -> None:
         """Check if the supplied configuration was used."""
@@ -171,30 +156,3 @@ class TestRadarAPIServer(unittest.TestCase):
                          uuid.UUID(result_freeze_frames[1][0]))
         self.assertEqual(test_radar_common.TEST_EVENT_FREEZE_FRAME_ALTERNATIVE,
                          result_freeze_frames[1][1])
-
-
-class TestRadarAPIServerDefaultApp(unittest.TestCase):
-    """Test for radar API server default app method."""
-
-    def setUp(self) -> None:
-        """Hooks up the API server factory to mocking."""
-        self.patcher = mock.patch(
-            'mlre.radar.radar_api_server.create_api_server')
-        self.patched_method = self.patcher.start()
-
-    def tearDown(self) -> None:
-        """Tears down the factory mock."""
-        self.patcher.stop()
-
-    def test_default_app(self) -> None:
-        """Tests if the default app creator uses the correct call."""
-        radar_api_server.create_default_app()  # type: ignore
-
-        # Method should have been called only once
-        self.assertEqual(1, self.patched_method.call_count)
-
-        # Extract method arguments
-        arguments, _ = self.patched_method.call_args
-
-        # Test if the supplied argument is an actual database.
-        self.assertTrue(isinstance(arguments[0], radar_database.RadarDatabase))
