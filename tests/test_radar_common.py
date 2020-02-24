@@ -19,8 +19,10 @@ TEST_CLIENT_INFO = radar_common.ClientInfo(TEST_HOSTNAME, TEST_ENVIRONMENT)
 TEST_CLIENT_INFO_ALTERNATIVE = radar_common.ClientInfo(TEST_HOSTNAME_ALTERNATIVE,
                                                        TEST_ENVIRONMENT_ALTERNATIVE)
 
-TEST_SESSION_UUID: uuid.UUID = uuid.uuid1()
-TEST_SESSION_UUID_ALTERNATIVE: uuid.UUID = uuid.uuid4()
+TEST_SESSION_UUID: uuid.UUID = uuid.UUID(
+    '0762a9c4-5717-11ea-b7cb-870634c4994e')
+TEST_SESSION_UUID_ALTERNATIVE: uuid.UUID = uuid.UUID(
+    'b2df89ee-347c-4120-9395-7775bb1be248')
 
 TEST_EVENT_SEVERITY: radar_common.Severity = radar_common.Severity.INFO
 TEST_EVENT_DESCRIPTION: str = "This is a test event"
