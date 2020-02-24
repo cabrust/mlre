@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}MLRE Radar{% endblock %}
+{% block content %}
+<h1>MLRE Radar Client Info</h1>
+<h2>Information</h2>
+<p>Hostname: {{ client_info.hostname }}</p>
+<h2>Environment Variables</h2>
+<table class="table">
+    <thead>
+    <tr>
+        <th>Variable</th>
+        <th>Value</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for key, value in client_info.environment_variables.items() %}
+    <tr>
+        <td>{{ key }}</td>
+        <td>{{ value }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

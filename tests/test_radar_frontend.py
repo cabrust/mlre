@@ -27,14 +27,24 @@ class RadarFrontendTestCase(test_radar_common.MockedDatabaseTestCase, snapshotte
 
     def test_index(self) -> None:
         """Snapshot tests the empty index page."""
-        index = self.frontend_test_client.get('/')
-        self.assertMatchSnapshot(index.data)
+        content = self.frontend_test_client.get('/')
+        self.assertMatchSnapshot(content.data)
 
     def test_event_details(self) -> None:
         """Snapshot tests event details page for index 0.
 
         This entry should come from the database mock."""
 
-        index = self.frontend_test_client.get('/event_details/0')
+        content = self.frontend_test_client.get('/event_details/0')
 
-        self.assertMatchSnapshot(index.data)
+        self.assertMatchSnapshot(content.data)
+
+    def test_client_info(self) -> None:
+        """Snapshot client details page for the first session uuid.
+
+        This entry should come from the database mock."""
+
+        content = self.frontend_test_client.get(
+            f'/client_info/{test_radar_common.TEST_SESSION_UUID}')
+
+        self.assertMatchSnapshot(content.data)

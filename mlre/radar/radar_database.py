@@ -75,7 +75,7 @@ class RadarDatabase:
 
         self._client_info[session_id] = client_info
 
-    def client_info(self, session_id: uuid.UUID) -> typing.Optional[radar_common.ClientInfo]:
+    def client_info(self, session_id: uuid.UUID) -> radar_common.ClientInfo:
         """Gets client info associated with a session id from the database."""
         return self._client_info[session_id]
 

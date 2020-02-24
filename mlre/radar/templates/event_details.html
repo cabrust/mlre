@@ -11,16 +11,16 @@
 <table class="table">
     <thead>
     <tr>
-        <th>Session UUID</th>
+        <th>Session</th>
         {% for key in freeze_frames[0][1].keys() %}
-        <th>{{key}}</th>
+        <th>{{ key }}</th>
         {% endfor %}
     </tr>
     </thead>
     <tbody>
     {% for freeze_frame in freeze_frames %}
     <tr>
-        <td>{{ freeze_frame[0] }}</td>
+        <td><a href="{{ url_for('.client_info', session_id=freeze_frame[0]) }}">{{freeze_frame[0]}}</a></td>
         {% for item in freeze_frame[1].values() %}
         <td>{{ item }}</td>
         {% endfor %}

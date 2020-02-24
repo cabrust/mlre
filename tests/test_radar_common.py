@@ -61,6 +61,9 @@ class MockedDatabaseTestCase(unittest.TestCase):
                                      (TEST_SESSION_UUID_ALTERNATIVE,
                                       TEST_EVENT_FREEZE_FRAME_ALTERNATIVE)])
 
+        patched_database_type.return_value.client_info.return_value = \
+            TEST_CLIENT_INFO
+
         # Create instance of mock
         self.database = patched_database_type()
 
