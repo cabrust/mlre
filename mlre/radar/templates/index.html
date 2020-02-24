@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}MLRE Radar{% endblock %}
 {% block content %}
-<h1 xmlns="http://www.w3.org/1999/html">MLRE Radar Overview</h1>
+<h1>MLRE Radar Overview</h1>
 <table class="table">
     <thead>
     <tr>
@@ -10,6 +10,7 @@
         <th scope="col">Location</th>
         <th scope="col">Description</th>
         <th scope="col">Frequency</th>
+        <th scope="col"></th>
     </tr>
     </thead>
     <tbody>
@@ -20,6 +21,7 @@
         <td>{{ event.location }}</td>
         <td>{{ event.description }}</td>
         <td>{{ event.frequency }}</td>
+        <td><a href="{{ url_for('.event_details', event_index=event.index) }}">Details</a></td>
     </tr>
     {% endfor %}
     </tbody>

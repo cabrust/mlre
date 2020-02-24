@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}MLRE Radar{% endblock %}
+{% block content %}
+<h1>MLRE Radar Event Details</h1>
+<h2>Identifier</h2>
+<p>Severity: {{ event_identifier.severity }}</p>
+<p>Location: {{ event_identifier.location }}</p>
+<p>Description: {{ event_identifier.description }}</p>
+<h2>Freeze Frame Data</h2>
+<!-- Assume that we always have freeze frames -->
+<table class="table">
+    <thead>
+    <tr>
+        <th>Session UUID</th>
+        {% for key in freeze_frames[0][1].keys() %}
+        <th>{{key}}</th>
+        {% endfor %}
+    </tr>
+    </thead>
+    <tbody>
+    {% for freeze_frame in freeze_frames %}
+    <tr>
+        <td>{{ freeze_frame[0] }}</td>
+        {% for item in freeze_frame[1].values() %}
+        <td>{{ item }}</td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

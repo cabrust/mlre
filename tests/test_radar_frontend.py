@@ -25,7 +25,16 @@ class RadarFrontendTestCase(test_radar_common.MockedDatabaseTestCase, snapshotte
         super().tearDown()
         self.frontend_test_client.__exit__(None, None, None)
 
-    def test_empty_index(self) -> None:
+    def test_index(self) -> None:
         """Snapshot tests the empty index page."""
-        empty_index = self.frontend_test_client.get('/')
-        self.assertMatchSnapshot(empty_index.data)
+        index = self.frontend_test_client.get('/')
+        self.assertMatchSnapshot(index.data)
+
+    def test_event_details(self) -> None:
+        """Snapshot tests event details page for index 0.
+
+        This entry should come from the database mock."""
+
+        index = self.frontend_test_client.get('/event_details/0')
+
+        self.assertMatchSnapshot(index.data)

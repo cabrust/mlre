@@ -68,7 +68,9 @@ def create_api_server_blueprint(database: radar_database.RadarDatabase) -> Bluep
     # pylint: disable=W0612
     def event(event_index: int) ->  \
             typing.Dict[str,
-                        typing.Sequence[typing.Tuple[uuid.UUID, radar_common.FreezeFrameData]]]:
+                        typing.Union[radar_common.EventIdentifier,
+                                     typing.Sequence[typing.Tuple[uuid.UUID,
+                                                                  radar_common.FreezeFrameData]]]]:
 
         event_identifier, freeze_frames = database.event(int(event_index))
         # type: ignore
