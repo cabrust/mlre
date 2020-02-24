@@ -54,24 +54,24 @@ def create_api_server_blueprint(database: radar_database.RadarDatabase) -> Bluep
         return ''
 
     @api_server.route('/event_identifiers')  # type: ignore
-    def event_identifiers() ->\
-            typing.Dict[str, typing.Sequence[radar_common.EventIdentifier]]:  # pylint: disable=W0612
-        response_data = database.event_identifiers()
-        return {"event_identifiers": response_data}
-
-    @api_server.route('/event', methods=['POST'])  # type: ignore
     # pylint: disable=W0612
-    def event() ->  \
+    def event_identifiers() ->\
+            typing.Dict[str,
+                        typing.Sequence[
+                            typing.Mapping[str,
+                                           typing.Union[int, radar_common.EventIdentifier]]]]:
+        response_data = [{"event_index": event_index, "event_identifier": event_identifier}
+                         for event_index, event_identifier in database.event_identifiers()]
+        return {"event_identifiers": response_data}  # type: ignore
+
+    @api_server.route('/event/<event_index>')  # type: ignore
+    # pylint: disable=W0612
+    def event(event_index: int) ->  \
             typing.Dict[str,
                         typing.Sequence[typing.Tuple[uuid.UUID, radar_common.FreezeFrameData]]]:
-        # Decode request
-        request_json = request.json  # type: ignore
-        event_identifier: radar_common.EventIdentifier = \
-            radar_common.EventIdentifier(
-                *request_json['event_identifier'])  # type: ignore
 
-        response_data = database.event(event_identifier)
-        return {"freeze_frames": response_data}
+        response_data = database.event(int(event_index))
+        return {"freeze_frames": response_data}  # type: ignore
 
     return api_server
 

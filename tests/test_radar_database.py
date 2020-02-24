@@ -16,7 +16,7 @@ class TestRadarDatabase(unittest.TestCase):
         """Test if initial database state is empty."""
         self.assertEqual(0, len(self.database.event_identifiers()))
 
-    def test_insert_1(self) -> None:
+    def test_insert_1(self) -> int:
         """Test if inserting one event works correctly.
 
         Test if:
@@ -25,21 +25,23 @@ class TestRadarDatabase(unittest.TestCase):
           - If the freeze frame data matches.
         """
 
-        self.database.insert_event(
+        index_1 = self.database.insert_event(
             test_radar_common.TEST_SESSION_UUID,
             test_radar_common.TEST_EVENT_IDENTIFIER,
             test_radar_common.TEST_EVENT_FREEZE_FRAME)
 
         self.assertEqual(1, len(self.database.event_identifiers()))
-        self.assertEqual(test_radar_common.TEST_EVENT_IDENTIFIER,
+        self.assertEqual((index_1, test_radar_common.TEST_EVENT_IDENTIFIER),
                          self.database.event_identifiers()[0])
 
         # Test if the freeze frame data matches
-        event = self.database.event(test_radar_common.TEST_EVENT_IDENTIFIER)
-        self.assertEqual(1, len(event))
+        event = self.database.event(index_1)
+        self.assertEqual(1, len(event[1]))
 
         self.assertEqual((test_radar_common.TEST_SESSION_UUID,
-                          test_radar_common.TEST_EVENT_FREEZE_FRAME), event[0])
+                          test_radar_common.TEST_EVENT_FREEZE_FRAME), event[1][0])
+
+        return index_1
 
     def test_insert_2_identical_events(self) -> None:
         """Test if inserting two identical events works correctly.
@@ -54,26 +56,30 @@ class TestRadarDatabase(unittest.TestCase):
         """
 
         # Insert one event and test it
-        self.test_insert_1()
-        self.database.insert_event(
+        index_1 = self.test_insert_1()
+        index_2: int = self.database.insert_event(
             test_radar_common.TEST_SESSION_UUID,
             test_radar_common.TEST_EVENT_IDENTIFIER,
             test_radar_common.TEST_EVENT_FREEZE_FRAME_ALTERNATIVE)
 
         self.assertEqual(1, len(self.database.event_identifiers()))
-        self.assertEqual(test_radar_common.TEST_EVENT_IDENTIFIER,
+        self.assertEqual((index_1, test_radar_common.TEST_EVENT_IDENTIFIER),
                          self.database.event_identifiers()[0])
 
         # Test if the new freeze frame data matches.
-        event = self.database.event(test_radar_common.TEST_EVENT_IDENTIFIER)
-        self.assertEqual(2, len(event))
+        event = self.database.event(index_2)
+        self.assertEqual(2, len(event[1]))
 
         # The sequence should be kept and the data should be identical.
         self.assertEqual((test_radar_common.TEST_SESSION_UUID,
-                          test_radar_common.TEST_EVENT_FREEZE_FRAME), event[0])
+                          test_radar_common.TEST_EVENT_FREEZE_FRAME), event[1][0])
         self.assertEqual(
             (test_radar_common.TEST_SESSION_UUID,
-             test_radar_common.TEST_EVENT_FREEZE_FRAME_ALTERNATIVE), event[1])
+             test_radar_common.TEST_EVENT_FREEZE_FRAME_ALTERNATIVE), event[1][1])
+
+        # The indices should be identical
+        self.assertEqual(
+            index_1, index_2, "The indices of identical events should be identical.")
 
     def test_insert_2_different_events(self) -> None:
         """Test if inserting two different events works correctly.
@@ -88,35 +94,38 @@ class TestRadarDatabase(unittest.TestCase):
         """
 
         # Insert one event and test it
-        self.test_insert_1()
+        index_1 = self.test_insert_1()
 
-        self.database.insert_event(
+        index_2: int = self.database.insert_event(
             test_radar_common.TEST_SESSION_UUID_ALTERNATIVE,
             test_radar_common.TEST_EVENT_IDENTIFIER_ALTERNATIVE,
             test_radar_common.TEST_EVENT_FREEZE_FRAME_ALTERNATIVE)
 
         self.assertEqual(2, len(self.database.event_identifiers()))
-        event_identifiers: typing.List[radar_common.EventIdentifier] = [
-            test_radar_common.TEST_EVENT_IDENTIFIER,
-            test_radar_common.TEST_EVENT_IDENTIFIER_ALTERNATIVE]
+        event_identifiers: typing.List[typing.Tuple[int, radar_common.EventIdentifier]] = [
+            (index_1, test_radar_common.TEST_EVENT_IDENTIFIER),
+            (index_2, test_radar_common.TEST_EVENT_IDENTIFIER_ALTERNATIVE)]
         self.assertEqual(event_identifiers,
                          self.database.event_identifiers())
 
         # Test if the new freeze frame data matches.
-        event1 = self.database.event(test_radar_common.TEST_EVENT_IDENTIFIER)
-        event2 = self.database.event(
-            test_radar_common.TEST_EVENT_IDENTIFIER_ALTERNATIVE)
+        event1 = self.database.event(index_1)
+        event2 = self.database.event(index_2)
 
-        self.assertEqual(1, len(event1))
-        self.assertEqual(1, len(event2))
+        self.assertEqual(1, len(event1[1]))
+        self.assertEqual(1, len(event2[1]))
 
         # The sequence should be kept and the data should be identical.
         self.assertEqual(
             (test_radar_common.TEST_SESSION_UUID,
-             test_radar_common.TEST_EVENT_FREEZE_FRAME), event1[0])
+             test_radar_common.TEST_EVENT_FREEZE_FRAME), event1[1][0])
         self.assertEqual(
             (test_radar_common.TEST_SESSION_UUID_ALTERNATIVE,
-             test_radar_common.TEST_EVENT_FREEZE_FRAME_ALTERNATIVE), event2[0])
+             test_radar_common.TEST_EVENT_FREEZE_FRAME_ALTERNATIVE), event2[1][0])
+
+        # The indices should be different
+        self.assertNotEqual(
+            index_1, index_2, "The indices of different events should be different.")
 
     def test_insert_1_client_info(self) -> None:
         """Tests if inserting client information works."""

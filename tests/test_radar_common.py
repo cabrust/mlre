@@ -50,8 +50,8 @@ class MockedDatabaseTestCase(unittest.TestCase):
 
         # Patch responses to method calls
         patched_database_type.return_value.event_identifiers.return_value = [
-            TEST_EVENT_IDENTIFIER,
-            TEST_EVENT_IDENTIFIER_ALTERNATIVE]
+            (0, TEST_EVENT_IDENTIFIER),
+            (1, TEST_EVENT_IDENTIFIER_ALTERNATIVE)]
 
         patched_database_type.return_value.event.return_value = \
             [(TEST_SESSION_UUID,

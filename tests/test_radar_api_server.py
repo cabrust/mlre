@@ -2,7 +2,7 @@
 import typing
 import uuid
 
-from flask import Flask
+from flask import Flask, url_for
 
 import mlre
 import test_radar_common
@@ -24,6 +24,8 @@ class TestRadarAPIServer(test_radar_common.MockedDatabaseTestCase):
 
         server = Flask(__name__)
         server.register_blueprint(self.api_server_blueprint)
+        self.test_request_context = server.test_request_context()
+        self.test_request_context.push()  # type: ignore
 
         self.api_test_client = server.test_client().__enter__()  # type: ignore
 
@@ -31,6 +33,7 @@ class TestRadarAPIServer(test_radar_common.MockedDatabaseTestCase):
         """Tears down the flask test client and database mock."""
         super().tearDown()
         self.api_test_client.__exit__(None, None, None)
+        self.test_request_context.pop()  # type: ignore
 
     def test_get_api_version(self) -> None:
         """Test if the reported API and MLRE versions are correct."""
@@ -110,19 +113,32 @@ class TestRadarAPIServer(test_radar_common.MockedDatabaseTestCase):
         result_event_identifiers = result['event_identifiers']
 
         self.assertEqual(2, len(result_event_identifiers))
+
+        # Test if identifier and index keys are present
+        for result_event_identifier in result_event_identifiers:
+            self.assertIn("event_identifier", result_event_identifier.keys(
+            ), "Result should have event_identifier key")
+            self.assertIn("event_index", result_event_identifier.keys(),
+                          "Result should have index key")
+
+        self.assertEqual(2, len(result_event_identifiers[1].keys()))
         self.assertEqual(test_radar_common.TEST_EVENT_IDENTIFIER,
-                         radar_common.EventIdentifier(*result_event_identifiers[0]))
+                         radar_common.EventIdentifier(
+                             *result_event_identifiers[0]["event_identifier"]))
         self.assertEqual(test_radar_common.TEST_EVENT_IDENTIFIER_ALTERNATIVE,
-                         radar_common.EventIdentifier(*result_event_identifiers[1]))
+                         radar_common.EventIdentifier(
+                             *result_event_identifiers[1]["event_identifier"]))
+
+        self.assertNotEqual(
+            result_event_identifiers[0]["event_index"],
+            result_event_identifiers[1]["event_index"],
+            "Event identifier indices should be different")
 
     def test_event(self) -> None:
         """Test if the event API calls the database correctly."""
 
-        request_body = {
-            "event_identifier": test_radar_common.TEST_EVENT_IDENTIFIER}
-
-        response = self.api_test_client.post(
-            '/event', json=request_body)
+        response = self.api_test_client.get(
+            url_for("mlre.radar.radar_api_server.event", event_index=23292))
 
         self.assertEqual(200, response.status_code)
 
@@ -134,7 +150,7 @@ class TestRadarAPIServer(test_radar_common.MockedDatabaseTestCase):
 
         self.assertEqual('event', target_method)
         self.assertEqual(1, len(arguments))
-        self.assertEqual(test_radar_common.TEST_EVENT_IDENTIFIER, arguments[0])
+        self.assertEqual(23292, arguments[0])
 
         # Test response for correctness
         result = response.get_json()

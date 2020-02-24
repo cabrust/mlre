@@ -17,11 +17,12 @@ def create_frontend_blueprint(database: radar_database.RadarDatabase) -> Bluepri
         event_identifiers = database.event_identifiers()
 
         context_data = [{
+            "index": event_index,
             "severity": radar_common.Severity(event_identifier.severity),
             "location": event_identifier.location,
             "description": event_identifier.description,
-            "frequency": len(database.event(event_identifier))
-        } for event_identifier in event_identifiers]
+            "frequency": len(database.event(event_index))
+        } for (event_index, event_identifier) in event_identifiers]
 
         return render_template('index.html', events=context_data)
 
