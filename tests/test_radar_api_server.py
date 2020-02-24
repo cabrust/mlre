@@ -2,12 +2,11 @@
 import typing
 import uuid
 
+from flask import Flask
+
 import mlre
 import test_radar_common
 from mlre.radar import radar_api_server, radar_common
-
-_TEST_CONFIGURATION: typing.Dict[str, str] = {
-    "TEST_CFG_1": "test_cfg_1_val", "TEST_CFG_2": "test_cfg_2_val"}
 
 
 class TestRadarAPIServer(test_radar_common.MockedDatabaseTestCase):
@@ -20,22 +19,18 @@ class TestRadarAPIServer(test_radar_common.MockedDatabaseTestCase):
         super().setUp()
 
         # Start test client
-        self.api_server = radar_api_server.create_api_server(
-            self.database, _TEST_CONFIGURATION)
+        self.api_server_blueprint = radar_api_server.create_api_server_blueprint(
+            self.database)
 
-        self.api_test_client = self.api_server.test_client().__enter__()  # type: ignore
+        server = Flask(__name__)
+        server.register_blueprint(self.api_server_blueprint)
+
+        self.api_test_client = server.test_client().__enter__()  # type: ignore
 
     def tearDown(self) -> None:
         """Tears down the flask test client and database mock."""
         super().tearDown()
         self.api_test_client.__exit__(None, None, None)
-
-    def test_configuration(self) -> None:
-        """Check if the supplied configuration was used."""
-        for key, value in _TEST_CONFIGURATION.items():
-            actual_value: str = typing.cast(
-                str, self.api_server.config.get(key))
-            self.assertEqual(value, actual_value)
 
     def test_get_api_version(self) -> None:
         """Test if the reported API and MLRE versions are correct."""

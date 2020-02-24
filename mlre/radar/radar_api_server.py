@@ -2,27 +2,20 @@
 import typing
 import uuid
 
-from flask import Flask, request
+from flask import Blueprint, request
 
 import mlre
 from mlre.radar import radar_common, radar_database
 
 
-def create_api_server(database: radar_database.RadarDatabase,   # type: ignore
-                      configuration: typing.Optional[typing.Mapping[str, typing.Any]] = None)\
-        -> Flask:
+# type: ignore
+def create_api_server_blueprint(database: radar_database.RadarDatabase) -> Blueprint:
     """Creates an instance of the API server.
 
     Args:
         database: An instance of the radar event and client info database.
-        configuration: Optional flask configuration values.
     """
-    api_server = Flask(
-        __name__, instance_relative_config=True)  # pragma: no mutate
-
-    # Apply configuration if possible
-    if configuration is not None:  # type: ignore
-        api_server.config.from_mapping(configuration)  # type: ignore
+    api_server = Blueprint(__name__, __name__)
 
     @api_server.route('/version')  # type: ignore
     def get_version() -> typing.Dict[str, str]:  # pylint: disable=W0612
@@ -83,4 +76,4 @@ def create_api_server(database: radar_database.RadarDatabase,   # type: ignore
     return api_server
 
 
-__all__ = ["create_api_server"]
+__all__ = ["create_api_server_blueprint"]
