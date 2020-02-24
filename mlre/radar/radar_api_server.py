@@ -70,8 +70,9 @@ def create_api_server_blueprint(database: radar_database.RadarDatabase) -> Bluep
             typing.Dict[str,
                         typing.Sequence[typing.Tuple[uuid.UUID, radar_common.FreezeFrameData]]]:
 
-        response_data = database.event(int(event_index))
-        return {"freeze_frames": response_data}  # type: ignore
+        event_identifier, freeze_frames = database.event(int(event_index))
+        # type: ignore
+        return {"event_identifier": event_identifier, "freeze_frames": freeze_frames}
 
     return api_server
 

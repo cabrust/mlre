@@ -54,10 +54,10 @@ class MockedDatabaseTestCase(unittest.TestCase):
             (1, TEST_EVENT_IDENTIFIER_ALTERNATIVE)]
 
         patched_database_type.return_value.event.return_value = \
-            [(TEST_SESSION_UUID,
-              TEST_EVENT_FREEZE_FRAME),
-             (TEST_SESSION_UUID_ALTERNATIVE,
-              TEST_EVENT_FREEZE_FRAME_ALTERNATIVE)]
+            (TEST_EVENT_IDENTIFIER, [(TEST_SESSION_UUID,
+                                      TEST_EVENT_FREEZE_FRAME),
+                                     (TEST_SESSION_UUID_ALTERNATIVE,
+                                      TEST_EVENT_FREEZE_FRAME_ALTERNATIVE)])
 
         # Create instance of mock
         self.database = patched_database_type()
