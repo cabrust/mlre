@@ -7,6 +7,6 @@
 ###
 Starting the Radar API server:
 ``` shell script
-FLASK_APP=mlre.radar.radar_api_server:create_default_app flask run
+FLASK_APP=mlre.radar.radar_app:create_default_app flask run
 ```
 
