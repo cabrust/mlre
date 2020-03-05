@@ -20,5 +20,5 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.7',
-    install_requires=["requests==2.22.0", "Flask==1.1.1"]
+    install_requires=["requests==2.22.0", "Flask==1.1.1", "grappa==0.1.11"]
 )
