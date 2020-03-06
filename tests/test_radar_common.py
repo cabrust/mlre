@@ -1,4 +1,6 @@
 """Common data for unit tests."""
+import os
+import tempfile
 import typing
 import unittest
 import uuid
@@ -38,6 +40,11 @@ TEST_EVENT_IDENTIFIER: radar_common.EventIdentifier = radar_common.EventIdentifi
 
 TEST_EVENT_IDENTIFIER_ALTERNATIVE: radar_common.EventIdentifier = radar_common.EventIdentifier(
     TEST_EVENT_SEVERITY, TEST_EVENT_LOCATION, TEST_EVENT_DESCRIPTION_ALTERNATIVE)
+
+TEST_DATABASE_FILENAME_1: str = os.path.join(
+    tempfile.gettempdir(), 'temp_db_1.radardb')
+TEST_DATABASE_FILENAME_2: str = os.path.join(
+    tempfile.gettempdir(), 'temp_db_2.radardb')
 
 
 class MockedDatabaseTestCase(unittest.TestCase):

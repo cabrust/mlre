@@ -1,8 +1,13 @@
 """Database access layer for radar event and client info."""
+import pickle  # nosec
 import typing
 import uuid
 
 from . import radar_common
+
+# Putting nosec here is safe as long as the database files can be trusted. Since they are not
+# transferred over the network, any attacker would have to have local access.
+
 
 _EventDataList = typing.List[typing.Tuple[
     radar_common.EventIdentifier,
@@ -78,6 +83,36 @@ class RadarDatabase:
     def client_info(self, session_id: uuid.UUID) -> radar_common.ClientInfo:
         """Gets client info associated with a session id from the database."""
         return self._client_info[session_id]
+
+    def load(self, path: str) -> None:
+        """Loads the database from the given path.
+
+        The database has to be empty. Otherwise, a ValueError is raised.
+
+        Args:
+            path: path to load the database from.
+        """
+        if len(self._client_info.keys()) > 0 or len(self._event_data) > 0:
+            raise ValueError("The database is not empty. Cannot load!")
+
+        with open(path, "rb") as db_file:
+            db_dict: typing.Mapping[str, typing.Union[_EventDataList,
+                                                      _ClientInfoDict]] =\
+                pickle.load(db_file)  # nosec
+            self._event_data = db_dict["event_data"]  # type: ignore
+            self._client_info = db_dict["client_info"]  # type: ignore
+
+    def save(self, path: str) -> None:
+        """Saves the database to the given path.
+
+        The file will be overwritten.
+
+        Args:
+            path: path to save the database to.
+        """
+        with open(path, "wb") as db_file:
+            pickle.dump({"client_info": self._client_info,  # type: ignore
+                         "event_data": self._event_data}, db_file)  # type: ignore
 
 
 __all__ = ["RadarDatabase"]
