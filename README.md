@@ -14,3 +14,5 @@ Radar is a networked event reporting library. Its main feature is the freeze fra
 ``` shell script
 FLASK_APP=mlre.radar.radar_app:create_default_app flask run
 ```
+
+This is the testing build for unsigned commits.
