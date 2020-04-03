@@ -30,18 +30,23 @@ class RadarSession:
         client_info = self.collect_client_info()
         self.api_client.report_client_info(client_info)
 
-        # Report that event has started
+        # Report that the session has started
         event_identifier = radar_common.EventIdentifier(severity=radar_common.Severity.INFO,
                                                         location=__name__,
                                                         description="Session started")
+        self.api_client.report_event(event_identifier, {})
+
+    def __exit__(self, exc_type: type,  # type: ignore
+                 exc_val: Exception,
+                 exc_tb: typing.Any) -> None:
+
+        # Report that the session has ended
+        event_identifier = radar_common.EventIdentifier(severity=radar_common.Severity.INFO,
+                                                        location=__name__,
+                                                        description="Session ended")
         self.api_client.report_event(event_identifier, {})
 
     @staticmethod
     def collect_client_info() -> radar_common.ClientInfo:
         """Collects information on the running client."""
         return radar_common.ClientInfo(socket.gethostname(), os.environ)  # type: ignore
-
-    def __exit__(self, exc_type: type,  # type: ignore
-                 exc_val: Exception,
-                 exc_tb: typing.Any) -> None:
-        pass

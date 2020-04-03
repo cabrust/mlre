@@ -61,18 +61,41 @@ class TestRadarSession(unittest.TestCase):
 
     def test_reports_session_start_event(self) -> None:
         """Tests if the Session reports a start event after connecting."""
+        if 'RADAR_SERVER' in os.environ.keys():
+            del os.environ['RADAR_SERVER']
+
+        with radar_session.RadarSession():
+            self.assertEqual(
+                1, self.patched_api_client_type.return_value.report_event.call_count)
+
+            # Check for correctness of start event
+            actual_identifier: radar_common.EventIdentifier =\
+                self.patched_api_client_type.return_value.report_event.call_args[
+                    0][0]
+            expected_identifier = radar_common.EventIdentifier(
+                severity=radar_common.Severity.INFO,
+                location="mlre.radar.radar_session",
+                description="Session started")
+
+        self.assertEqual(expected_identifier, actual_identifier)
+
+    def test_reports_session_end_event(self) -> None:
+        """Tests if the Session reports an end event when exiting the session."""
+
+        # Session should be concluded after this
         self.test_server_default()
 
+        # 2 because it includes both start and end events
         self.assertEqual(
-            1, self.patched_api_client_type.return_value.report_event.call_count)
+            2, self.patched_api_client_type.return_value.report_event.call_count)
 
-        # Check for correctness of start event
+        # Check for correctness of end event
         actual_identifier: radar_common.EventIdentifier =\
             self.patched_api_client_type.return_value.report_event.call_args[
                 0][0]
         expected_identifier = radar_common.EventIdentifier(
             severity=radar_common.Severity.INFO,
             location="mlre.radar.radar_session",
-            description="Session started")
+            description="Session ended")
 
         self.assertEqual(expected_identifier, actual_identifier)
